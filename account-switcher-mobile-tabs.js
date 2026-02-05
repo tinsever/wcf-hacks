@@ -42,7 +42,7 @@
                                 <div class="userMenuTitle">Verlinkte Accounts</div>
                                 <div class="userMenuButtons">
                                     ${searchButtonHtml}
-                                    <a href="https://carta.nationen.org/account-switch-add/" class="userMenuButton">
+                                    <a href="https://www.mein-forum.test/index.php?account-switch-add/" class="userMenuButton">
                                         <fa-icon size="24" name="plus" solid></fa-icon>
                                     </a>
                                 </div>
@@ -50,7 +50,7 @@
                             ${searchWrapperHtml}
                             <div class="userMenuContent userMenuContentScrollable"></div>
                             <div class="userMenuFooter">
-                                <a href="https://carta.nationen.org/account-switch-accounts/" class="userMenuFooterLink">Alle Verlinkungen anzeigen</a>
+                                <a href="https://www.mein-forum.test/index.php?account-switch-accounts/" class="userMenuFooterLink">Alle Verlinkungen anzeigen</a>
                             </div>
                         </div>`;
 
@@ -96,7 +96,7 @@
     async function fetchAccounts(panel) {
         const token = document.querySelector('.xsrfTokenInput')?.value;
         if (!token) return;
-        const response = await fetch(`https://carta.nationen.org/index.php?ajax-proxy/&t=${token}`, {
+        const response = await fetch(`https://www.mein-forum.test/index.php?ajax-proxy/&t=${token}`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest" },
             body: new URLSearchParams({
