@@ -1,4 +1,8 @@
 (function() {
+    const config = {
+        enableSearch: true 
+    };
+
     try {
         require(['WoltLabSuite/Core/Ui/Page/Menu/User'], (PageMenuUser) => {
             const TargetClass = PageMenuUser.PageMenuUser || PageMenuUser.default;
@@ -22,24 +26,57 @@
                     panel.className = "pageMenuUserTabPanel";
                     panel.hidden = true;
 
+                    const searchButtonHtml = config.enableSearch 
+                        ? `<a class="userMenuButton wcfSearchToggleButton" style="cursor:pointer"><fa-icon size="24" name="search" solid></fa-icon></a>` 
+                        : '';
+
+                    const searchWrapperHtml = config.enableSearch 
+                        ? `<div class="userMenuSearch wcfCustomSearchWrapper" style="display: none; padding: 10px 15px; background: var(--wcfContainerAccentBackground); border-bottom: 1px solid var(--wcfBorder)">
+                               <input type="text" class="wcfCustomSearchInput" placeholder="Account suchen…" style="width: 100%; padding: 6px 10px; border: 1px solid var(--wcfInputBorder); border-radius: var(--wcfBorderRadius);">
+                           </div>` 
+                        : '';
+
                     panel.innerHTML = `
                         <div class="userMenu" tabindex="-1">
                             <div class="userMenuHeader">
                                 <div class="userMenuTitle">Verlinkte Accounts</div>
                                 <div class="userMenuButtons">
-                                    <a href="https://www.your-forum-url.test/account-switch-add/" class="userMenuButton">
+                                    ${searchButtonHtml}
+                                    <a href="https://carta.nationen.org/account-switch-add/" class="userMenuButton">
                                         <fa-icon size="24" name="plus" solid></fa-icon>
                                     </a>
                                 </div>
                             </div>
+                            ${searchWrapperHtml}
                             <div class="userMenuContent userMenuContentScrollable"></div>
                             <div class="userMenuFooter">
-                                <a href="https://www.your-forum-url.test/account-switch-accounts/" class="userMenuFooterLink">Alle Verlinkungen anzeigen</a>
+                                <a href="https://carta.nationen.org/account-switch-accounts/" class="userMenuFooterLink">Alle Verlinkungen anzeigen</a>
                             </div>
                         </div>`;
 
                     this.tabs.push(tab);
                     this.tabPanels.set(tab, panel);
+
+                    if (config.enableSearch) {
+                        const searchWrapper = panel.querySelector('.wcfCustomSearchWrapper');
+                        const searchInput = panel.querySelector('.wcfCustomSearchInput');
+                        const toggleBtn = panel.querySelector('.wcfSearchToggleButton');
+
+                        toggleBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const isHidden = searchWrapper.style.display === 'none';
+                            searchWrapper.style.display = isHidden ? 'block' : 'none';
+                            if (isHidden) searchInput.focus();
+                        });
+
+                        searchInput.addEventListener('input', (e) => {
+                            const term = e.target.value.toLowerCase();
+                            panel.querySelectorAll('.userMenuItem').forEach(item => {
+                                const name = item.querySelector('.userMenuItemLink').textContent.toLowerCase();
+                                item.hidden = !name.includes(term);
+                            });
+                        });
+                    }
 
                     tab.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -59,7 +96,7 @@
     async function fetchAccounts(panel) {
         const token = document.querySelector('.xsrfTokenInput')?.value;
         if (!token) return;
-        const response = await fetch(`https://www.your-forum-url.test/index.php?ajax-proxy/&t=${token}`, {
+        const response = await fetch(`https://carta.nationen.org/index.php?ajax-proxy/&t=${token}`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest" },
             body: new URLSearchParams({
